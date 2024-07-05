@@ -1,1 +1,124 @@
+-- Create the database
+CREATE DATABASE RailwayManagementSystem;
 
+-- Use the created database
+USE RailwayManagementSystem;
+
+-- Table for Trains
+CREATE TABLE Trains (
+    train_id INT AUTO_INCREMENT PRIMARY KEY,
+    train_name VARCHAR(255) NOT NULL,
+    source VARCHAR(255) NOT NULL,
+    destination VARCHAR(255) NOT NULL,
+    departure_time TIME NOT NULL,
+    arrival_time TIME NOT NULL,
+    days_operating VARCHAR(255) NOT NULL  -- e.g., "Mon,Wed,Fri"
+);
+
+-- Table for Train Status
+CREATE TABLE TrainStatus (
+    status_id INT AUTO_INCREMENT PRIMARY KEY,
+    train_id INT NOT NULL,
+    status_date DATE NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (train_id) REFERENCES Trains(train_id)
+);
+
+-- Table for Passengers
+CREATE TABLE Passengers (
+    passenger_id INT AUTO_INCREMENT PRIMARY KEY,
+    train_id INT NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    age INT NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    seat_number VARCHAR(10) NOT NULL,
+    booking_date DATE NOT NULL,
+    FOREIGN KEY (train_id) REFERENCES Trains(train_id)
+);
+
+-- Table for Booking
+CREATE TABLE Bookings (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    passenger_id INT NOT NULL,
+    train_id INT NOT NULL,
+    booking_date DATE NOT NULL,
+    status ENUM('Booked', 'Cancelled') NOT NULL,
+    FOREIGN KEY (passenger_id) REFERENCES Passengers(passenger_id),
+    FOREIGN KEY (train_id) REFERENCES Trains(train_id)
+);
+
+-- Table for Staff
+CREATE TABLE Staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    position VARCHAR(255) NOT NULL,
+    train_id INT,
+    FOREIGN KEY (train_id) REFERENCES Trains(train_id)
+);
+
+-- Table for Stations
+CREATE TABLE Stations (
+    station_id INT AUTO_INCREMENT PRIMARY KEY,
+    station_name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL
+);
+
+-- Table for Train Schedule
+CREATE TABLE TrainSchedule (
+    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    train_id INT NOT NULL,
+    station_id INT NOT NULL,
+    arrival_time TIME NOT NULL,
+    departure_time TIME NOT NULL,
+    FOREIGN KEY (train_id) REFERENCES Trains(train_id),
+    FOREIGN KEY (station_id) REFERENCES Stations(station_id)
+);
+
+-- Insert sample data into Trains table
+INSERT INTO Trains (train_name, source, destination, departure_time, arrival_time, days_operating)
+VALUES
+('Express 101', 'City A', 'City B', '08:00:00', '12:00:00', 'Mon,Wed,Fri'),
+('Express 102', 'City B', 'City C', '14:00:00', '18:00:00', 'Tue,Thu,Sat');
+
+-- Insert sample data into TrainStatus table
+INSERT INTO TrainStatus (train_id, status_date, status)
+VALUES
+(1, '2024-07-05', 'On Time'),
+(2, '2024-07-05', 'Delayed');
+
+-- Insert sample data into Passengers table
+INSERT INTO Passengers (train_id, first_name, last_name, age, gender, seat_number, booking_date)
+VALUES
+(1, 'John', 'Doe', 30, 'Male', 'A1', '2024-07-04'),
+(1, 'Jane', 'Smith', 25, 'Female', 'A2', '2024-07-04'),
+(2, 'Alice', 'Johnson', 28, 'Female', 'B1', '2024-07-04');
+
+-- Insert sample data into Bookings table
+INSERT INTO Bookings (passenger_id, train_id, booking_date, status)
+VALUES
+(1, 1, '2024-07-04', 'Booked'),
+(2, 1, '2024-07-04', 'Booked'),
+(3, 2, '2024-07-04', 'Booked');
+
+-- Insert sample data into Staff table
+INSERT INTO Staff (first_name, last_name, position, train_id)
+VALUES
+('Michael', 'Brown', 'Conductor', 1),
+('Sarah', 'Davis', 'Engineer', 2);
+
+-- Insert sample data into Stations table
+INSERT INTO Stations (station_name, location)
+VALUES
+('Central Station', 'City A'),
+('West Station', 'City B'),
+('East Station', 'City C');
+
+-- Insert sample data into TrainSchedule table
+INSERT INTO TrainSchedule (train_id, station_id, arrival_time, departure_time)
+VALUES
+(1, 1, '07:50:00', '08:00:00'),
+(1, 2, '11:50:00', '12:00:00'),
+(2, 2, '13:50:00', '14:00:00'),
+(2, 3, '17:50:00', '18:00:00');
